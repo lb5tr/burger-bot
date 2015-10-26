@@ -6,5 +6,5 @@
     "irc_channels" : ["#burgerbot-test"],
     "amqp_server" : "localhost",
     "amqp_port" : 5672,
-    "irc_allowed_channels" = ["#burgerbot-test"]
+    "irc_allowed_channels" : ["#burgerbot-test"]
 }
