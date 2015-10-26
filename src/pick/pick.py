@@ -2,13 +2,15 @@ from hashlib import sha1
 
 import pika
 import json
+import simplejson as json
 
 
 def compose_response(msg, result):
     return {
-        "content": "%s: %s" % (msg["from"], result),
+        "command": "msg",
+        "message": "%s: %s" % (msg["from"], result),
         "from": msg["from"],
-        "channel": msg["channel"]
+        "user": msg["channel"]
     }
 
 
@@ -20,8 +22,8 @@ def send_result(msg):
 
 
 def pick(words):
-    r = sorted(map(lambda word: (word, sha1(word).hexdigest()), words))
-    r = map(lambda t: t[0], r)
+    r = sorted(map(lambda word: (sha1(word).hexdigest(), word), words))
+    r = map(lambda t: t[1], r)
     return ' < '.join(r)
 
 
