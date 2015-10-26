@@ -18,6 +18,23 @@ class IRC(irc.IRCClient):
     nickname = 'burgerbot'
     realname = 'burgerbot'
 
+    def dispatch(self, command, msg):
+        command_params = {
+            "topic" : ["channel", "topic"],
+            "kick" : ["channel", "user", "reason"],
+            "join" : ["channel", "key"],
+            "leave" : ["channel", "reason"],
+            "say" : ["channel", "say"],
+            "msg": ["user", "message"],
+            "notice": ["user", "message"]
+        }
+        params = {}
+
+        for p in command_params[command]:
+            params[p] = msg[p]
+
+        getattr(self, command)(**params)
+
     @defer.inlineCallbacks
     def on_outbound_command(self, queue_object):
         op, tag = queue_object
@@ -33,7 +50,7 @@ class IRC(irc.IRCClient):
 
     def signedOn(self):
         for channel in self.factory.config.irc_channels:
-            self.join(channel.encode('ascii'))
+            self.join(channel)
 
         self.factory.amqp.start_outbound_queue(self.on_outbound_command)
 
