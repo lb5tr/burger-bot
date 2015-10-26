@@ -73,7 +73,7 @@ class IRC(irc.IRCClient):
 
     def irc_unknown(self, prefix, command, params):
         channel = params[1]
-        allowed_channels = self.factory.config.allowed_channels
+        allowed_channels = self.factory.config.irc_allowed_channels
         if command == "INVITE" and channel in allowed_channels:
             self.join(channel)
 
