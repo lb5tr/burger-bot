@@ -31,7 +31,7 @@ def callback(ch, method, properties, body):
     words = data["content"].split(' ')
 
     msg = None
-    if len(words) == 0:
+    if len(words) == 0 or words[0] == "":
         msg = compose_fail_to_kick(data["channel"])
     else:
         msg = compose_kick(words[0], data["channel"])

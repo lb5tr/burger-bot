@@ -31,7 +31,10 @@ class IRC(irc.IRCClient):
         params = {}
 
         for p in command_params[command]:
-            params[p] = msg[p]
+            if p in msg:
+                params[p] = msg[p]
+            else:
+                return
 
         getattr(self, command)(**params)
 
