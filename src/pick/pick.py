@@ -39,6 +39,7 @@ channel = connection.channel()
 result = channel.queue_declare(exclusive=True)
 queue_name = result.method.queue
 
+channel.exchange_declare(exchange='bus')
 channel.queue_bind(exchange='bus',
                    queue=queue_name,
                    routing_key="burger.command.pick")
