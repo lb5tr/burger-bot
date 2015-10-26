@@ -1,4 +1,4 @@
-import json
+import simplejson as json
 
 class Config(object):
     def __init__(self, base_dir, env):

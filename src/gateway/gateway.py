@@ -1,6 +1,7 @@
 import pika
 import json
 import os
+import simplejson as json
 
 from pika.adapters import twisted_connection
 from twisted.internet import defer, reactor, task, protocol
@@ -21,8 +22,13 @@ class IRC(irc.IRCClient):
     def on_outbound_command(self, queue_object):
         op, tag = queue_object
         ch, method, prop, body = yield op.get()
-        msg = json.loads(body)
-        self.msg(msg["channel"].encode('utf8'), msg["content"].encode('utf8'))
+        msg = json.loads(body, encoding='utf8')
+        command = msg["command"]
+        commands_whitelist = ["topic", "kick", "join", "leave", "say", "msg", "notice"]
+
+        if command in commands_whitelist:
+            self.dispatch(command, msg)
+
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def signedOn(self):
@@ -67,9 +73,10 @@ class IRC(irc.IRCClient):
             routing_key = "burger.command.%s" % command
 
         print "publishing to: ", routing_key
+        serialized = json.dumps(to_send)
         self.factory.amqp.channel.basic_publish(exchange='bus',
                                                 routing_key=routing_key,
-                                                body=json.dumps(to_send))
+                                                body=serialized)
 
     def irc_unknown(self, prefix, command, params):
         channel = params[1]
