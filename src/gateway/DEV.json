@@ -1,0 +1,10 @@
+{
+    "command_character" : ",",
+    "irc_server" : "irc.freenode.org",
+    "irc_port" : 6667,
+    "irc_nick" : "burgerbot-test",
+    "irc_channels" : ["#burgerbot-test"],
+    "amqp_server" : "localhost",
+    "amqp_port" : 5672,
+    "irc_allowed_channels" = ["#burgerbot-test"]
+}
