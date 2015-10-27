@@ -49,3 +49,10 @@ class Module(object):
 
     def on_message(self, channel, method, props, body):
         raise NotImplemented()
+
+    def compose_msg(self, user, msg):
+        return {
+            "command": "msg",
+            "user": user,
+            "message": msg
+        }
