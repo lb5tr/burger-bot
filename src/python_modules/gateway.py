@@ -6,13 +6,10 @@ import simplejson as json
 from pika.adapters import twisted_connection
 from twisted.internet import defer, reactor, task, protocol
 from twisted.words.protocols import irc
-from config import Config
+from python_common import Config
 
-base_dir = os.getenv('BURGER_DIR') or './'
-env = os.getenv('BURGER_ENV') or 'DEV'
+CONFIG = Config()
 
-CONFIG = Config(base_dir, env)
-print CONFIG.irc_channels
 
 class IRC(irc.IRCClient):
     nickname = 'burgerbot'
@@ -88,11 +85,9 @@ class IRC(irc.IRCClient):
         routing_key = "burger.msg"
 
         if command:
-            print "got command"
             to_send["content"] = self.get_command_params(msg)
             routing_key = "burger.command.%s" % command
 
-        print "publishing to: ", routing_key
         serialized = json.dumps(to_send)
         self.factory.amqp.channel.basic_publish(exchange='bus',
                                                 routing_key=routing_key,
