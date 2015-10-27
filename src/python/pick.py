@@ -1,6 +1,5 @@
 from hashlib import sha1
 
-import pika
 import simplejson as json
 from python_common import Module
 
@@ -8,7 +7,6 @@ from python_common import Module
 class PickModule(Module):
     def on_message(self, channel, method, props, body):
             data = json.loads(body)
-            content = data["content"]
             words = data["content"].split()
 
             if not words:
