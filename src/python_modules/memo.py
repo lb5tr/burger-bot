@@ -5,6 +5,7 @@ import datetime
 
 CONFIG = Config()
 
+
 class Memo(object):
     @staticmethod
     def parse(memo_from, content):
@@ -12,35 +13,48 @@ class Memo(object):
         if len(words) < 2:
             return None
 
+        now = datetime.datetime.now()
         memo = {
             "memo_to":  words[0],
             "memo_from": memo_from,
-            "content" : ' '.join(words[1:]),
-            "date" : datetime.datetime.now(),
+            "content": ' '.join(words[1:]),
+            "date": now,
             "sent": False
             }
-
         return memo
+
+    @staticmethod
+    def pager(memo):
+        msg = "%s: Memo from %s created at %s: %s" % (
+            memo["memo_to"],
+            memo["memo_from"],
+            memo["date"].strftime('%Y/%m/%d %H:%M:%S'),
+            memo["content"])
+
+        return msg
 
 
 class MemoModule(Module):
-
     def __init__(self, name, routing_keys, mongo_client):
         super(MemoModule, self).__init__(name, routing_keys)
         self.mongo_client = mongo_client
 
-    def check_msg(self, data):
+    def get_unsent_memos(self, memo_to):
         db = self.mongo_client.memo_module.memos
+        return db.find({"memo_to": memo_to, "sent": False})
+
+    def set_memo_as_sent(self, memo):
+        db = self.mongo_client.memo_module.memos
+        db.update_one(memo, {"$set": {"sent": True}})
+
+    def check_msg(self, data):
         msg_origin = data["channel"]
         msg_from = data["from"]
 
-        for memo in db.find({"memo_to": msg_from, "sent": False}):
-            msg = "%s: Memo from %s : %s" % (
-                memo["memo_to"],
-                memo["memo_from"],
-                memo["content"])
-            msg = self.compose_msg(msg_origin, msg)
-            db.update_one(memo, { "$set": {"sent": True}})
+        for memo in self.get_unsent_memos(msg_from):
+            self.set_memo_as_sent(memo)
+            pager = Memo.pager(memo)
+            msg = self.compose_msg(msg_origin, pager)
             self.send_result(msg)
 
     def add_memo(self, data):
@@ -58,7 +72,6 @@ class MemoModule(Module):
 
         result = self.compose_msg(msg_origin, msg)
         self.send_result(result)
-
 
     def on_message(self, ch, method, properties, body):
         data = json.loads(body)
