@@ -40,8 +40,8 @@ class EbinModule(Module):
         match = regex.match(content)
         if match:
             msg = self.generate_msg(match)
-            print msg
-            self.compose_msg(origin, content)
+            msg = self.compose_msg(origin, content)
+            self.send_result(msg)
 
 
 em = EbinModule("ebin", ["burger.msg"])
