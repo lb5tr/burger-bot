@@ -4,7 +4,7 @@ import simplejson as json
 import re
 from random import randint
 
-regex = re.compile('(:+)([-_]+)([Dd]+)')
+regex = re.compile('.*(:+)([-_]+)([Dd]+).*')
 texts = ["EBIN", "5/5", "well memed", "EBIN 5/5", "BRETTY GOOD"]
 p = 2
 
