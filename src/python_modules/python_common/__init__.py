@@ -22,20 +22,23 @@ class Config(object):
 
 
 class Module(object):
-    def __init__(self, name, routing_keys):
+    def __init__(self):
         params = pika.ConnectionParameters(host='localhost')
         self.connection = pika.BlockingConnection(params)
         self.channel = self.connection.channel()
-        self.name = name
-        self.queue = self.channel.queue_declare(queue=self.name, exclusive=True)
+        self.name = self.__class__.__name__
+        self.queues = {}
 
-        for key in routing_keys:
-            self.channel.queue_bind(exchange='bus',
-                                    queue=self.name,
-                                    routing_key=key)
+    def listen(self, key, callback):
+        queue_name = "%s.%s" % (self.name, key)
+        queue = self.channel.queue_declare(queue=queue_name, exclusive=True)
+        self.queues[queue_name] = queue
+        self.channel.queue_bind(exchange='bus',
+                                queue=queue_name,
+                                routing_key=key)
 
-        self.channel.basic_consume(self.on_message,
-                                   queue=self.name,
+        self.channel.basic_consume(callback,
+                                   queue=queue_name,
                                    no_ack=True)
 
     def run(self):
@@ -46,9 +49,6 @@ class Module(object):
             exchange='bus',
             routing_key='burger.outbound.send',
             body=json.dumps(msg))
-
-    def on_message(self, channel, method, props, body):
-        raise NotImplemented()
 
     def compose_msg(self, user, msg):
         return {

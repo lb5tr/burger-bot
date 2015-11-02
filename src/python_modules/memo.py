@@ -35,8 +35,8 @@ class Memo(object):
 
 
 class MemoModule(Module):
-    def __init__(self, name, routing_keys, mongo_client):
-        super(MemoModule, self).__init__(name, routing_keys)
+    def __init__(self, mongo_client):
+        super(MemoModule, self).__init__()
         self.mongo_client = mongo_client
 
     def get_unsent_memos(self, memo_to):
@@ -73,13 +73,16 @@ class MemoModule(Module):
         result = self.compose_msg(msg_origin, msg)
         self.send_result(result)
 
-    def on_message(self, ch, method, properties, body):
+    def on_msg(self, ch, method, properties, body):
         data = json.loads(body)
-        if method.routing_key == 'burger.command.memo':
-            self.add_memo(data)
-        elif method.routing_key == 'burger.msg':
-            self.check_msg(data)
+        self.check_msg(data)
+
+    def on_memo(self, ch, method, properties, body):
+        data = json.loads(body)
+        self.add_memo(data)
 
 mongo_client = pymongo.MongoClient(CONFIG.mongo_host, CONFIG.mongo_port)
-mm = MemoModule("memo", ["burger.command.memo", "burger.msg"], mongo_client)
+mm = MemoModule(mongo_client)
+mm.listen("burger.command.memo", mm.on_memo)
+mm.listen("burger.msg", mm.on_msg)
 mm.run()

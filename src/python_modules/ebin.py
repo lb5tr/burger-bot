@@ -32,7 +32,7 @@ class EbinModule(Module):
 
         return colons + dashes + the_Ds + ' ' + text
 
-    def on_message(self, method, channel, props, body):
+    def on_msg(self, method, channel, props, body):
         body = json.loads(body)
         content = body["content"]
         origin = body["channel"]
@@ -47,5 +47,6 @@ class EbinModule(Module):
             self.send_result(msg)
 
 
-em = EbinModule("ebin", ["burger.msg"])
+em = EbinModule()
+em.listen("burger.msg", em.on_msg)
 em.run()

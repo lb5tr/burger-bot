@@ -18,7 +18,7 @@ class SageModule(Module):
             "reason": ":^)"
         }
 
-    def on_message(self, ch, method, properties, body):
+    def on_sage(self, ch, method, properties, body):
         data = json.loads(body)
         words = data["content"].split()
 
@@ -31,5 +31,6 @@ class SageModule(Module):
         self.send_result(msg)
 
 
-sm = SageModule("sage", ["burger.command.sage"])
+sm = SageModule()
+sm.listen("burger.command.sage", sm.on_sage)
 sm.run()

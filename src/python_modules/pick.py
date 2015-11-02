@@ -5,24 +5,17 @@ from python_common import Module
 
 
 class PickModule(Module):
-    def on_message(self, channel, method, props, body):
+    def on_pick(self, channel, method, props, body):
             data = json.loads(body)
             words = data["content"].split()
+            origin = data["channel"]
 
             if not words:
                 return
 
             result = self.pick(words)
-            msg = self.compose_response(data, result)
+            msg = self.compose_msg(origin, "%s: %s" % (data["from"], result))
             self.send_result(msg)
-
-    def compose_response(self, msg, result):
-        return {
-            "command": "msg",
-            "message": "%s: %s" % (msg["from"], result),
-            "from": msg["from"],
-            "user": msg["channel"]
-        }
 
     def pick(self, words):
         r = sorted(map(lambda word: (sha1(word).hexdigest(), word), words))
@@ -30,5 +23,6 @@ class PickModule(Module):
         return ' < '.join(r)
 
 
-pm = PickModule("pick", ["burger.command.pick"])
+pm = PickModule()
+pm.listen("burger.command.pick", pm.on_pick)
 pm.run()
