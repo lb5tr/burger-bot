@@ -1,6 +1,4 @@
 import pika
-import json
-import os
 import simplejson as json
 
 from pika.adapters import twisted_connection
@@ -17,11 +15,11 @@ class IRC(irc.IRCClient):
 
     def dispatch(self, command, msg):
         command_params = {
-            "topic" : ["channel", "topic"],
-            "kick" : ["channel", "user", "reason"],
-            "join" : ["channel", "key"],
-            "leave" : ["channel", "reason"],
-            "say" : ["channel", "say"],
+            "topic": ["channel", "topic"],
+            "kick": ["channel", "user", "reason"],
+            "join": ["channel", "key"],
+            "leave": ["channel", "reason"],
+            "say": ["channel", "say"],
             "msg": ["user", "message"],
             "notice": ["user", "message"]
         }
@@ -41,7 +39,13 @@ class IRC(irc.IRCClient):
         ch, method, prop, body = yield op.get()
         msg = json.loads(body, encoding='utf8')
         command = msg["command"]
-        commands_whitelist = ["topic", "kick", "join", "leave", "say", "msg", "notice"]
+        commands_whitelist = ["topic",
+                              "kick",
+                              "join",
+                              "leave",
+                              "say",
+                              "msg",
+                              "notice"]
 
         if command in commands_whitelist:
             self.dispatch(command, msg)
@@ -145,8 +149,8 @@ class AMQP(object):
         l.start(0.01)
 
 
-def on_error():
-    print 'error!'
+def on_error(error, er):
+    print 'error!', error, er
 
 
 def on_close():
