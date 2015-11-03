@@ -48,7 +48,7 @@ class LoggerModule(Module):
     def respond_with_usage(self, origin):
         self.send_result(self.compose_msg(
             origin,
-            "usage - ,greplog <regex> [options]"))
+            "usage - ,greplog /<regex>/options"))
 
     def on_greplog(self, ch, method, properties, body):
         data = json.loads(body)
