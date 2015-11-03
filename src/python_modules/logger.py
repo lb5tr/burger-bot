@@ -35,7 +35,7 @@ class LoggerModule(Module):
             results = [msg] + results
 
         for msg in results:
-            self.send_result(self.compose_msg(origin,
+            self.send_result(self.compose_msg(msg["from"],
                                               "[%s] <%s> %s" % (
                                                   self.date_string(msg["timestamp"]),
                                                   msg["from"],
