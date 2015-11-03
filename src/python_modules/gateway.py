@@ -1,6 +1,7 @@
 import pika
 import simplejson as json
 
+from time import time
 from pika.adapters import twisted_connection
 from twisted.internet import defer, reactor, task, protocol
 from twisted.words.protocols import irc
@@ -83,6 +84,7 @@ class IRC(irc.IRCClient):
             "from": user,
             "channel": channel,
             "content": msg,
+            "timestamp": int(time())
         }
 
         command = self.get_command(msg)
