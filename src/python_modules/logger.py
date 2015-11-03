@@ -3,6 +3,7 @@ from datetime import datetime
 
 import simplejson as json
 import pymongo
+import re
 
 
 CONFIG = Config()
@@ -44,25 +45,25 @@ class LoggerModule(Module):
                     msg["from"],
                     msg["content"])))
 
+    def respond_with_usage(self, origin):
+        self.send_result(self.compose_msg(
+            origin,
+            "usage - ,greplog <regex> [options]"))
+
     def on_greplog(self, ch, method, properties, body):
         data = json.loads(body)
         origin = data["channel"]
         db = self.mongo_client.logger_module[origin]
 
-        words = data["content"].split()
-        options = ''
+        content = data["content"]
+        matches = re.match('^[ ]*\/(.*)\/([imxs]*)[ ]*$', content)
 
-        if not words:
-            self.send_result(
-                self.compose_msg(
-                    origin,
-                    "usage - ,greplog <regex> [options]"))
+        if matches is None:
+            self.respond_with_usage(origin)
             return
 
-        regex = words[0]
-
-        if len(words) >= 2:
-            options = words[1]
+        regex = matches.group(1)
+        options = matches.group(2)
 
         logs = db.find(
             {"content":
