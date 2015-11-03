@@ -15,6 +15,7 @@ class IRC(irc.IRCClient):
     realname = 'burgerbot'
 
     def dispatch(self, command, msg):
+        self.commands_sent -= 1
         command_params = {
             "topic": ["channel", "topic"],
             "kick": ["channel", "user", "reason"],
@@ -36,6 +37,7 @@ class IRC(irc.IRCClient):
 
     @defer.inlineCallbacks
     def on_outbound_command(self, queue_object):
+        self.commands_sent += 1
         op, tag = queue_object
         ch, method, prop, body = yield op.get()
         msg = json.loads(body, encoding='utf8')
@@ -49,11 +51,12 @@ class IRC(irc.IRCClient):
                               "notice"]
 
         if command in commands_whitelist:
-            self.dispatch(command, msg)
+            reactor.callLater(self.commands_sent, self.dispatch, command, msg)
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def signedOn(self):
+        self.commands_sent = 0
         for channel in self.factory.config.irc_channels:
             self.join(channel)
 
