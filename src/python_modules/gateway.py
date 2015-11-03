@@ -37,7 +37,6 @@ class IRC(irc.IRCClient):
 
     @defer.inlineCallbacks
     def on_outbound_command(self, queue_object):
-        self.commands_sent += 1
         op, tag = queue_object
         ch, method, prop, body = yield op.get()
         msg = json.loads(body, encoding='utf8')
@@ -53,6 +52,7 @@ class IRC(irc.IRCClient):
         if command in commands_whitelist:
             reactor.callLater(self.commands_sent, self.dispatch, command, msg)
 
+        self.commands_sent += 1
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def signedOn(self):
