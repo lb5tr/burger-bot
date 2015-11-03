@@ -1,4 +1,4 @@
-from python_common import Module, Confi
+from python_common import Module, Config
 from datetime import datetime
 
 import simplejson as json
