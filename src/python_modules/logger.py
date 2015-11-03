@@ -7,10 +7,12 @@ import pymongo
 
 CONFIG = Config()
 
+
 class LoggerModule(Module):
     def __init__(self, mongo_client):
         super(LoggerModule, self).__init__()
         self.mongo_client = mongo_client
+        self.lines = 15
 
     def on_message(self, ch, method, properties, body):
         data = json.loads(body)
@@ -23,28 +25,55 @@ class LoggerModule(Module):
 
     def on_backlog(self, ch, method, properties, body):
         data = json.loads(body)
-        words = data["content"].split()
         origin = data["channel"]
-        lines = 15
         db = self.mongo_client.logger_module[origin]
+        backlog = db.find().sort([("$natural", -1)]).limit(self.lines)
 
-        backlog = db.find().sort([("$natural", -1)]).limit(lines)
+        self.send_collection(data["from"], backlog)
 
+    def send_collection(self, dest, collection):
         results = []
-        for msg in backlog:
+        for msg in collection:
             results = [msg] + results
 
         for msg in results:
-            self.send_result(self.compose_msg(data["from"],
-                                              "[%s] <%s> %s" % (
-                                                  self.date_string(msg["timestamp"]),
-                                                  msg["from"],
-                                                  msg["content"])))
+            self.send_result(self.compose_msg(
+                dest,
+                "[%s] <%s> %s" % (
+                    self.date_string(msg["timestamp"]),
+                    msg["from"],
+                    msg["content"])))
 
+    def on_greplog(self, ch, method, properties, body):
+        data = json.loads(body)
+        origin = data["channel"]
+        db = self.mongo_client.logger_module[origin]
+
+        words = data["content"].split()
+        options = ''
+
+        if not words:
+            self.send_result(
+                self.compose_msg(
+                    origin,
+                    "usage - ,greplog <regex> [options]"))
+            return
+
+        regex = words[0]
+
+        if len(words) >= 2:
+            options = words[1]
+
+        logs = db.find(
+            {"content":
+             {"$regex": regex,
+              "$options": options}}).limit(self.lines).sort([("$natural", -1)])
+        self.send_collection(origin, logs)
 
 
 mongo_client = pymongo.MongoClient(CONFIG.mongo_host, CONFIG.mongo_port)
 lm = LoggerModule(mongo_client)
 lm.listen("burger.msg", lm.on_message)
 lm.listen("burger.command.backlog", lm.on_backlog)
+lm.listen("burger.command.greplog", lm.on_greplog)
 lm.run()
