@@ -13,7 +13,8 @@ class LoggerModule(Module):
     def __init__(self, mongo_client):
         super(LoggerModule, self).__init__()
         self.mongo_client = mongo_client
-        self.lines = 15
+        self.backlog_lines = 50
+        self.grep_lines = 15
 
     def on_message(self, ch, method, properties, body):
         data = json.loads(body)
@@ -28,7 +29,7 @@ class LoggerModule(Module):
         data = json.loads(body)
         origin = data["channel"]
         db = self.mongo_client.logger_module[origin]
-        backlog = db.find().sort([("$natural", -1)]).limit(self.lines)
+        backlog = db.find().sort([("$natural", -1)]).limit(self.backlog_lines)
 
         self.send_collection(data["from"], backlog)
 
@@ -40,7 +41,8 @@ class LoggerModule(Module):
         for msg in results:
             self.send_result(self.compose_msg(
                 dest,
-                "[%s] <%s> %s" % (
+                "%s [%s] <%s> %s" % (
+                    msg["channel"],
                     self.date_string(msg["timestamp"]),
                     msg["from"],
                     msg["content"])))
@@ -68,7 +70,7 @@ class LoggerModule(Module):
         logs = db.find(
             {"content":
              {"$regex": regex,
-              "$options": options}}).limit(self.lines).sort([("$natural", -1)])
+              "$options": options}}).limit(self.grep_lines).sort([("$natural", -1)])
         self.send_collection(origin, logs)
 
 
