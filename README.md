@@ -1,6 +1,6 @@
 # burger - AMQP based IRC bot
 
-## Key goals:
+## Key goals
 
 * simple to extend
 * live feature updates
