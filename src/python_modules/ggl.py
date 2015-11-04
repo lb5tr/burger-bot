@@ -21,8 +21,6 @@ class GoogleSearch(object):
         return results
 
     def lucky_guess(self, query):
-        print query
-
         r = self.search(query)
         r = self.get_results(r)
 
@@ -43,7 +41,8 @@ class GoogleModule(Module):
         query = data["content"]
         search_results = self.search.lucky_guess(query)
 
-        self.send_result(self.compose_msg(origin, search_results))
+        msg = self.compose_msg(origin, search_results)
+        self.send_result(msg)
 
 
 sm = GoogleSearch()

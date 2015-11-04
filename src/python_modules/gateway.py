@@ -29,7 +29,7 @@ class IRC(irc.IRCClient):
 
         for p in command_params[command]:
             if p in msg:
-                params[p] = msg[p]
+                params[p] = msg[p].encode('utf-8')
             else:
                 return
 
@@ -40,7 +40,7 @@ class IRC(irc.IRCClient):
         self.commands_sent += 1
         op, tag = queue_object
         ch, method, prop, body = yield op.get()
-        msg = json.loads(body, encoding='utf8')
+        msg = json.loads(body)
         command = msg["command"]
         commands_whitelist = ["topic",
                               "kick",
