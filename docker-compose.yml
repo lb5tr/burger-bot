@@ -1,0 +1,11 @@
+rabbitmq:
+  image: rabbitmq:3-management
+  ports:
+    - "4369:4369"
+    - "5672:5672"
+    - "8080:15672"
+
+mongo:
+  image: mongo
+  ports:
+    - "27017:27017"
