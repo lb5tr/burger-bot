@@ -8,5 +8,6 @@
     "amqp_port" : 5672,
     "irc_allowed_channels" : ["#burgerbot-test"],
     "mongo_host" : "localhost",
-    "mongo_port" : 27017
+    "mongo_port" : 27017,
+    "base_dir" : "/home/kubov/code/burger/"
 }
