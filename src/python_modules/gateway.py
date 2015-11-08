@@ -11,8 +11,11 @@ CONFIG = Config()
 
 
 class IRC(irc.IRCClient):
-    nickname = 'burgerbot'
-    realname = 'burgerbot'
+    
+    def __init__(self, factory):
+        self.factory = factory
+        self.nickname = factory.config.irc_nick
+        self.realname = factory.config.irc_nick
 
     def dispatch(self, command, msg):
         self.commands_sent -= 1
@@ -115,8 +118,8 @@ class IRCFactory(protocol.ClientFactory):
         self.amqp = amqp
 
     def buildProtocol(self, addr):
-        p = IRC()
-        p.factory = self
+        p = IRC(self)
+        print "irc built"
         return p
 
     def clientConnectionLost(self, connector, reason):
