@@ -1,4 +1,4 @@
-from python_common import Module
+from python_common import Module, Config
 import simplejson as json
 
 import re
@@ -46,7 +46,7 @@ class EbinModule(Module):
             msg = self.compose_msg(origin, msg)
             self.send_result(msg)
 
-
-em = EbinModule()
+config = Config()
+em = EbinModule(config)
 em.listen("burger.msg", em.on_msg)
 em.run()

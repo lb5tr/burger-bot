@@ -1,5 +1,5 @@
 import simplejson as json
-from python_common import Module
+from python_common import Module, Config
 
 
 class SageModule(Module):
@@ -31,6 +31,7 @@ class SageModule(Module):
         self.send_result(msg)
 
 
-sm = SageModule()
+config = Config()
+sm = SageModule(config)
 sm.listen("burger.command.sage", sm.on_sage)
 sm.run()

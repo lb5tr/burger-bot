@@ -3,8 +3,6 @@ import simplejson as json
 import pymongo
 import datetime
 
-CONFIG = Config()
-
 
 class Memo(object):
     @staticmethod
@@ -35,8 +33,8 @@ class Memo(object):
 
 
 class MemoModule(Module):
-    def __init__(self, mongo_client):
-        super(MemoModule, self).__init__()
+    def __init__(self, config, mongo_client):
+        super(MemoModule, self).__init__(config)
         self.mongo_client = mongo_client
 
     def get_unsent_memos(self, memo_to):
@@ -81,8 +79,9 @@ class MemoModule(Module):
         data = json.loads(body)
         self.add_memo(data)
 
-mongo_client = pymongo.MongoClient(CONFIG.mongo_host, CONFIG.mongo_port)
-mm = MemoModule(mongo_client)
+config = Config()
+mongo_client = pymongo.MongoClient(config.mongo_host, config.mongo_port)
+mm = MemoModule(config, mongo_client)
 mm.listen("burger.command.memo", mm.on_memo)
 mm.listen("burger.msg", mm.on_msg)
 mm.run()

@@ -6,12 +6,9 @@ import pymongo
 import re
 
 
-CONFIG = Config()
-
-
 class LoggerModule(Module):
-    def __init__(self, mongo_client):
-        super(LoggerModule, self).__init__()
+    def __init__(self, config, mongo_client):
+        super(LoggerModule, self).__init__(config)
         self.mongo_client = mongo_client
         self.backlog_lines = 50
         self.grep_lines = 15
@@ -74,8 +71,9 @@ class LoggerModule(Module):
         self.send_collection(origin, logs)
 
 
-mongo_client = pymongo.MongoClient(CONFIG.mongo_host, CONFIG.mongo_port)
-lm = LoggerModule(mongo_client)
+config = Config()
+mongo_client = pymongo.MongoClient(config.mongo_host, config.mongo_port)
+lm = LoggerModule(config, mongo_client)
 lm.listen("burger.msg", lm.on_message)
 lm.listen("burger.command.backlog", lm.on_backlog)
 lm.listen("burger.command.greplog", lm.on_greplog)

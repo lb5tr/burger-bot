@@ -14,7 +14,7 @@
 ## Development
 
 * `$ cd burger-bot/`
-* `$ virtaulenv .`
+* `$ virtualenv .`
 * `$ . bin/activate`
 * `$ pip install -r dist/requirements-common.txt`
 * `$ docker-compose up -d`

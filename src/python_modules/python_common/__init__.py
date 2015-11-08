@@ -1,6 +1,7 @@
 import pika
 import os
 import simplejson as json
+from git import Repo
 
 class Config(object):
     def __init__(self):
@@ -21,12 +22,28 @@ class Config(object):
 
 
 class Module(object):
-    def __init__(self):
+    def __init__(self, config):
         params = pika.ConnectionParameters(host='localhost')
         self.connection = pika.BlockingConnection(params)
         self.channel = self.connection.channel()
         self.name = self.__class__.__name__
         self.queues = {}
+        self.app_config = config
+        self.version = self._get_version()
+        self._get_version()
+        self.listen("burger.command.version", self._on_version)
+
+    def _on_version(self, chan, method, properties, body):
+        data = json.loads(body)
+        origin = data["channel"]
+        self.send_result(self.compose_msg(origin,
+                                          "%s revision is %s" % (
+                                              self.name,
+                                              self.version)))
+
+    def _get_version(self):
+        repo = Repo(self.app_config.base_dir)
+        self.version = repo.head.commit.hexsha
 
     def listen(self, key, callback):
         queue_name = "%s.%s" % (self.name, key)
