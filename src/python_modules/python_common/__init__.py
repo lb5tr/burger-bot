@@ -5,7 +5,7 @@ from git import Repo
 
 class Config(object):
     def __init__(self):
-        base_dir = os.getenv('BURGER_DIR') or  '../envs/'
+        base_dir = os.getenv('BURGER_DIR') or os.path.dirname(os.path.realpath(__file__)) + '/../../envs/'
         env = os.getenv('BURGER_ENV') or 'DEV'
         d = self._load_config(base_dir, env)
 

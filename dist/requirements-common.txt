@@ -2,3 +2,4 @@ pika
 twisted
 simplejson
 gitpython
+requests
