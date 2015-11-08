@@ -1,4 +1,4 @@
-from python_common import Module
+from python_common import Module, Config
 from requests import get
 import simplejson as json
 
@@ -31,8 +31,8 @@ class GoogleSearch(object):
 
 
 class GoogleModule(Module):
-    def __init__(self, search_module):
-        super(GoogleModule, self).__init__()
+    def __init__(self, search_module, config):
+        super(GoogleModule, self).__init__(config)
         self.search = search_module
 
     def on_google(self, ch, method, properties, body):
@@ -44,8 +44,8 @@ class GoogleModule(Module):
         msg = self.compose_msg(origin, search_results)
         self.send_result(msg)
 
-
+config = Config()
 sm = GoogleSearch()
-gm = GoogleModule(sm)
+gm = GoogleModule(sm, config)
 gm.listen('burger.command.g', gm.on_google)
 gm.run()

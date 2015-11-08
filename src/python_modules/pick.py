@@ -1,7 +1,7 @@
 from hashlib import sha1
 
 import simplejson as json
-from python_common import Module
+from python_common import Module, Config
 
 
 class PickModule(Module):
@@ -23,6 +23,7 @@ class PickModule(Module):
         return ' < '.join(r)
 
 
-pm = PickModule()
+config = Config()
+pm = PickModule(config)
 pm.listen("burger.command.pick", pm.on_pick)
 pm.run()
