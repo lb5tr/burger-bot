@@ -43,7 +43,7 @@ class Module(object):
                                               self.version)))
 
     def listen(self, key, callback):
-        self.amqp.listen(key, callback, self.name)
+        self.amqp.listen(key, callback, self.name, 'bus')
 
     def run(self):
         self.amqp.run()

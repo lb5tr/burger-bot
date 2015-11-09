@@ -10,11 +10,11 @@ class RabbitMQ(object):
     def run(self):
         self.channel.start_consuming()
 
-    def listen(self, key, callback, name):
+    def listen(self, key, callback, name, exchange):
         queue_name = "%s.%s" % (name, key)
         queue = self.channel.queue_declare(queue=queue_name, exclusive=True)
         self.queues[queue_name] = queue
-        self.channel.queue_bind(exchange='bus',
+        self.channel.queue_bind(exchange=exchange,
                                 queue=queue_name,
                                 routing_key=key)
 
@@ -24,8 +24,8 @@ class RabbitMQ(object):
 
     def send_result(self, exchange, routing_key, msg):
         self.channel.basic_publish(
-            exchange='bus',
-            routing_key='burger.outbound.send',
+            exchange=exchange,
+            routing_key=routing_key,
             body=msg)
 
 
