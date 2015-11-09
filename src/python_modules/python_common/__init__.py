@@ -23,14 +23,13 @@ class Config(object):
 
 class Module(object):
     def __init__(self, config):
-        params = pika.ConnectionParameters(host='localhost')
+        self.app_config = config
+        params = pika.ConnectionParameters(host=config.amqp_server, port=config.amqp_port)
         self.connection = pika.BlockingConnection(params)
         self.channel = self.connection.channel()
         self.name = self.__class__.__name__
         self.queues = {}
-        self.app_config = config
         self.version = self._get_version()
-        self._get_version()
         self.listen("burger.command.version", self._on_version)
 
     def _on_version(self, chan, method, properties, body):
@@ -43,7 +42,7 @@ class Module(object):
 
     def _get_version(self):
         repo = Repo(self.app_config.base_dir)
-        self.version = repo.head.commit.hexsha
+        return repo.head.commit.hexsha
 
     def listen(self, key, callback):
         queue_name = "%s.%s" % (self.name, key)
