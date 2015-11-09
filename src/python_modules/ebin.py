@@ -37,7 +37,7 @@ class EbinModule(Module):
         content = body["content"]
         origin = body["channel"]
 
-        if body["from"] == 'burgerbot':
+        if body["from"] == self.app_config.irc_nick:
             return
 
         match = regex.match(content)
