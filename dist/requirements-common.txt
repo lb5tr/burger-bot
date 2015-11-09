@@ -2,4 +2,4 @@ pika
 twisted
 simplejson
 gitpython
-requests
+requests >=2.6.1,<2.7
