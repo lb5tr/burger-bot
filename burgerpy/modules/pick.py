@@ -1,7 +1,7 @@
 from hashlib import sha1
 
 import simplejson as json
-from python_common import Module, Config
+from burgerpy.common import Module, Config
 
 
 class PickModule(Module):

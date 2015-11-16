@@ -1,4 +1,4 @@
-from python_common import Config, Module
+from burgerpy.common import Config, Module
 import simplejson as json
 import pymongo
 import datetime

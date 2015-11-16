@@ -5,13 +5,13 @@ from time import time
 from pika.adapters import twisted_connection
 from twisted.internet import defer, reactor, task, protocol
 from twisted.words.protocols import irc
-from python_common import Config
+from burgerpy.common import Config
 
 CONFIG = Config()
 
 
 class IRC(irc.IRCClient):
-    
+
     def __init__(self, factory):
         self.factory = factory
         self.nickname = factory.config.irc_nick

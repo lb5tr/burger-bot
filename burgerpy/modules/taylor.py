@@ -1,4 +1,4 @@
-from python_common import Module, Config
+from burgerpy.common import Module, Config
 from requests import get
 import simplejson as json
 import random
