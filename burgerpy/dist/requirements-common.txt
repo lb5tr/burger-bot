@@ -3,3 +3,4 @@ twisted
 simplejson
 gitpython
 requests >=2.6.1,<2.7
+pymongo
