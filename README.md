@@ -16,6 +16,6 @@
 * `$ cd burger-bot/`
 * `$ virtualenv .`
 * `$ . bin/activate`
-* `$ pip install -r dist/requirements-common.txt`
+* `$ pip install -r burgerpy/dist/requirements-common.txt`
 * `$ docker-compose up -d`
-* then run `src/python_modules/gateway.py` module and any other desired one
+* then run `pyhon -m burgerpy.modules.gateway` module and any other desired one
