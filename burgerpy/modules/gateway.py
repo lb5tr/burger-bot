@@ -164,14 +164,16 @@ def on_error(error, er):
 def on_close():
     print 'close!'
 
-amqp = AMQP()
-factory = IRCFactory(CONFIG, amqp)
-params = pika.ConnectionParameters(CONFIG.amqp_server, CONFIG.amqp_port)
-conn = twisted_connection.TwistedConnection(parameters=params,
-                                            on_open_callback=amqp.setup,
-                                            on_open_error_callback=on_error,
-                                            on_close_callback=on_close)
-reactor.connectTCP(CONFIG.irc_server,
-                   CONFIG.irc_port,
-                   factory)
-reactor.run()
+
+if __name__ == "__main__":
+    amqp = AMQP()
+    factory = IRCFactory(CONFIG, amqp)
+    params = pika.ConnectionParameters(CONFIG.amqp_server, CONFIG.amqp_port)
+    conn = twisted_connection.TwistedConnection(parameters=params,
+                                                on_open_callback=amqp.setup,
+                                                on_open_error_callback=on_error,
+                                                on_close_callback=on_close)
+    reactor.connectTCP(CONFIG.irc_server,
+                       CONFIG.irc_port,
+                       factory)
+    reactor.run()

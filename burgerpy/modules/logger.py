@@ -71,10 +71,11 @@ class LoggerModule(Module):
         self.send_collection(origin, logs)
 
 
-config = Config()
-mongo_client = pymongo.MongoClient(config.mongo_host, config.mongo_port)
-lm = LoggerModule(config, mongo_client)
-lm.listen("burger.msg", lm.on_message)
-lm.listen("burger.command.backlog", lm.on_backlog)
-lm.listen("burger.command.greplog", lm.on_greplog)
-lm.run()
+if __name__ == "__main__":
+    config = Config()
+    mongo_client = pymongo.MongoClient(config.mongo_host, config.mongo_port)
+    lm = LoggerModule(config, mongo_client)
+    lm.listen("burger.msg", lm.on_message)
+    lm.listen("burger.command.backlog", lm.on_backlog)
+    lm.listen("burger.command.greplog", lm.on_greplog)
+    lm.run()

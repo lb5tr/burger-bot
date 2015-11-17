@@ -46,7 +46,8 @@ class EbinModule(Module):
             msg = self.compose_msg(origin, msg)
             self.send_result(msg)
 
-config = Config()
-em = EbinModule(config)
-em.listen("burger.msg", em.on_msg)
-em.run()
+if __name__ == "__main__":
+    config = Config()
+    em = EbinModule(config)
+    em.listen("burger.msg", em.on_msg)
+    em.run()

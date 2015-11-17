@@ -2,7 +2,6 @@ from burgerpy.common import Module, Config
 from requests import get
 import simplejson as json
 import random
-import string
 
 
 class TaylorQuoteFinder(object):
@@ -25,6 +24,7 @@ class TaylorQuoteFinder(object):
 
         return random.choice(lyricsLines)
 
+
 class TaylorModule(Module):
     def __init__(self, search_module, config):
         super(TaylorModule, self).__init__(config)
@@ -33,14 +33,15 @@ class TaylorModule(Module):
     def on_taylor(self, ch, method, properties, body):
         data = json.loads(body)
         origin = data["channel"]
-        query = data["content"]
         search_results = self.search.roll()
 
         msg = self.compose_msg(origin, search_results)
         self.send_result(msg)
 
-config = Config()
-qf = TaylorQuoteFinder()
-tm = TaylorModule(qf, config)
-tm.listen('burger.command.taylor', tm.on_taylor)
-tm.run()
+
+if __name__ == "__main__":
+    config = Config()
+    qf = TaylorQuoteFinder()
+    tm = TaylorModule(qf, config)
+    tm.listen('burger.command.taylor', tm.on_taylor)
+    tm.run()

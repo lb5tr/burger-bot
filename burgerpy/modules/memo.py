@@ -79,9 +79,11 @@ class MemoModule(Module):
         data = json.loads(body)
         self.add_memo(data)
 
-config = Config()
-mongo_client = pymongo.MongoClient(config.mongo_host, config.mongo_port)
-mm = MemoModule(config, mongo_client)
-mm.listen("burger.command.memo", mm.on_memo)
-mm.listen("burger.msg", mm.on_msg)
-mm.run()
+
+if __name__ == "__main__":
+    config = Config()
+    mongo_client = pymongo.MongoClient(config.mongo_host, config.mongo_port)
+    mm = MemoModule(config, mongo_client)
+    mm.listen("burger.command.memo", mm.on_memo)
+    mm.listen("burger.msg", mm.on_msg)
+    mm.run()

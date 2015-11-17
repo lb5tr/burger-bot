@@ -44,8 +44,10 @@ class GoogleModule(Module):
         msg = self.compose_msg(origin, search_results)
         self.send_result(msg)
 
-config = Config()
-sm = GoogleSearch()
-gm = GoogleModule(sm, config)
-gm.listen('burger.command.g', gm.on_google)
-gm.run()
+
+if __name__ == "__main__":
+    config = Config()
+    sm = GoogleSearch()
+    gm = GoogleModule(sm, config)
+    gm.listen('burger.command.g', gm.on_google)
+    gm.run()

@@ -18,4 +18,4 @@
 * `$ . bin/activate`
 * `$ pip install -r burgerpy/dist/requirements-common.txt`
 * `$ docker-compose up -d`
-* then run `pyhon -m burgerpy.modules.gateway` module and any other desired one
+* then run `python -m burgerpy.modules.gateway` module and any other desired one

@@ -23,7 +23,8 @@ class PickModule(Module):
         return ' < '.join(r)
 
 
-config = Config()
-pm = PickModule(config)
-pm.listen("burger.command.pick", pm.on_pick)
-pm.run()
+if __name__ == "__main__":
+    config = Config()
+    pm = PickModule(config)
+    pm.listen("burger.command.pick", pm.on_pick)
+    pm.run()

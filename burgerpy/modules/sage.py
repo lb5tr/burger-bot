@@ -31,7 +31,8 @@ class SageModule(Module):
         self.send_result(msg)
 
 
-config = Config()
-sm = SageModule(config)
-sm.listen("burger.command.sage", sm.on_sage)
-sm.run()
+if __name__ == "__main__":
+    config = Config()
+    sm = SageModule(config)
+    sm.listen("burger.command.sage", sm.on_sage)
+    sm.run()
