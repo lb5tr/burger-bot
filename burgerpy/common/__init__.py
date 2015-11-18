@@ -49,7 +49,7 @@ class Module(object):
         self.amqp.run()
 
     def send_result(self, msg):
-        self.amqp.send_result('bus', 'burger.outbound.send', json.dumps(msg))
+        return self.amqp.send_result('bus', 'burger.outbound.send', json.dumps(msg))
 
     def compose_msg(self, user, msg):
         return {
