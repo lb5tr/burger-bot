@@ -10,4 +10,4 @@ setup(name='burgerpy',
           'gitpython',
           'requests>=2.6.1,<2.7',
           'pymongo'],
-      packages=find_packages())
+      packages=find_packages(exclude=['tests']))
