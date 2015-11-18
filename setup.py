@@ -9,7 +9,5 @@ setup(name='burgerpy',
           'pika',
           'gitpython',
           'requests>=2.6.1,<2.7',
-          'pymongo'
-      ],
-      packages=find_packages(exclude=['tests'])
-     )
+          'pymongo'],
+      packages=find_packages(exclude=['tests']))

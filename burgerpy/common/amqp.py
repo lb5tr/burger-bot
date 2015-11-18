@@ -1,5 +1,6 @@
 import pika
 
+
 class RabbitMQ(object):
     def __init__(self, host, port):
         params = pika.ConnectionParameters(host=host, port=port)
@@ -27,5 +28,4 @@ class RabbitMQ(object):
             exchange=exchange,
             routing_key=routing_key,
             body=msg)
-
 
