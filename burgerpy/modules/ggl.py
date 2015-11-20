@@ -1,4 +1,5 @@
 from burgerpy.common import Module, Config
+from burgerpy.common.utils import strip_tags
 from requests import get
 import simplejson as json
 
@@ -13,7 +14,7 @@ class GoogleSearch(object):
         msg = "%s: %s - %s" % (
             result["titleNoFormatting"],
             result["url"],
-            result["content"])
+            strip_tags(result["content"]))
         return msg
 
     def get_results(self, response):
