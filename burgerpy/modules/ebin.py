@@ -49,5 +49,5 @@ class EbinModule(Module):
 if __name__ == "__main__":
     config = Config()
     em = EbinModule(config)
-    em.listen("burger.msg", em.on_msg)
+    em.listen("burger.privmsg", em.on_msg)
     em.run()

@@ -76,34 +76,65 @@ class IRC(irc.IRCClient):
 
         return False
 
+    def emit(self, key, data):
+        data["timestamp"] = int(time())
+        self.factory.amqp.channel.basic_publish(exchange='bus', routing_key=key, body=json.dumps(data))
+
     def is_command(self, word):
         return word[0] == self.factory.config.command_character
 
     def get_command_params(self, msg):
         return ' '.join(msg.split(' ')[1:])
 
+    def joined(self, channel):
+        self.emit('burger.joined', {"channel": channel})
+
+    def left(self, channel):
+        self.emit('burger.left', {"channel": channel})
+
+    def noticed(self, user, channel, message):
+        self.emit('burger.noticed', {"user": user, "channel": channel, "message": message})
+
+    def modeChanged(self, user, channel, set, modes, args):
+        self.emit('burger.modeChanaged', {"user": user, "channel": channel, "set": set, "modes": modes, "args": args})
+
+    def kickedFrom(self, channel, kicker, message):
+        self.emit('burger.kickedFrom', {"channel": channel, "kicker": kicker, "message": message})
+
+    def nickChanaged(self, nick):
+        self.emit('burger.nickChanaged', {"nick": nick})
+
+    def userJoined(self, user, channel):
+        self.emit('burger.userJoined', {"user": user, "channel": channel})
+
+    def userLeft(self, user, channel):
+        self.emit('burger.userLeft', {"user": user, "channel": channel})
+
+    def userQuit(self, user, quitMessage):
+        self.emit('burger.userQuit', {"user": user, "quitMessage": quitMessage})
+
+    def userKicked(self, kickee, channel, kicker, message):
+        self.emit('burger.userKicked', {"kickee": kickee, "channel": channel, "kicker": kicker, "message": message})
+
+    def userRenamed(self, oldname, newname):
+        self.emit('burger.userRenamed', {"oldname": oldname, "newname": newname})
+
     def privmsg(self, user, channel, msg):
         user = user.split('!', 1)[0]
 
         to_send = {
-            "is_privmsg": channel == self.nickname,
             "from": user,
             "channel": channel,
             "content": msg,
-            "timestamp": int(time())
         }
 
         command = self.get_command(msg)
-        routing_key = "burger.msg"
+        self.emit('burger.privmsg', to_send)
 
         if command:
             to_send["content"] = self.get_command_params(msg)
             routing_key = "burger.command.%s" % command
-
-        serialized = json.dumps(to_send)
-        self.factory.amqp.channel.basic_publish(exchange='bus',
-                                                routing_key=routing_key,
-                                                body=serialized)
+            self.emit(routing_key, to_send)
 
     def irc_unknown(self, prefix, command, params):
         channel = params[1]
