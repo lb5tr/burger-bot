@@ -58,6 +58,9 @@ class Module(object):
             "message": msg
         }
 
+    def send(self, user, string):
+        return self.send_result(self.compose_msg(user, string))
+
     def _get_version(self):
         repo = Repo(self.app_config.base_dir)
         return repo.head.commit.hexsha
