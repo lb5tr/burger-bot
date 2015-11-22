@@ -7,11 +7,16 @@ class VModule(Module):
     def on_v(self, chan, method, prop, body):
         data = json.loads(body)
         origin = data["channel"]
+        if data["from"] == self.app_config.irc_nick:
+            return
 
         self.send(origin, data["content"])
+        for c in data["content"][1:]:
+            if c.isspace():
+                self.send(origin, u'\u2000')
+            else:
+                self.send(origin, c)
 
-        for c in data["content"]:
-            self.send(origin, c)
 
 if __name__ == "__main__":
     c = Config()
