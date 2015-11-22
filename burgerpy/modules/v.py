@@ -10,6 +10,13 @@ class VModule(Module):
         if data["from"] == self.app_config.irc_nick:
             return
 
+        if len(data["content"]) > 15:
+            self.amqp.send_result('bus',
+                                  'burger.command.sage',
+                                  json.dumps({"channel": origin,
+                                              "content": data["from"]}))
+            return
+
         self.send(origin, data["content"])
         for c in data["content"][1:]:
             if c.isspace():
