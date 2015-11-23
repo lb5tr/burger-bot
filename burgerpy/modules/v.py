@@ -17,7 +17,7 @@ class VModule(Module):
                                               "content": data["from"]}))
             return
 
-        self.send(origin, data["content"])
+        self.send(origin, " ".join(data["content"]))
         for c in data["content"][1:]:
             if c.isspace():
                 self.send(origin, u'\u2000')
