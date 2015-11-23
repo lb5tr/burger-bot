@@ -13,7 +13,11 @@ class URLSModule(Module):
     def get_title(self, url):
         r = requests.get(url, verify=False)
         root = fromstring(r.content)
-        return root.findtext(".//title")
+        title = root.findtext(".//title")
+        if title is None:
+            raise ValueError
+        else:
+            return title
 
     def format_title(self, title):
         title = title.encode('utf-8')
@@ -28,7 +32,10 @@ class URLSModule(Module):
         origin = data["channel"]
         matches = re.findall(r'(https?://\S+)', content)
 
-        map(lambda url: self.send(origin, self.title(url)), matches)
+        try:
+            map(lambda url: self.send(origin, self.title(url)), matches)
+        except ValueError:
+            return
 
 if __name__ == "__main__":
     c = Config()
