@@ -8,6 +8,7 @@ setup(name='burgerpy',
           'twisted',
           'pika',
           'gitpython',
+          'lxml',
           'requests>=2.6.1,<2.7',
           'pymongo'],
       packages=find_packages(exclude=['tests']))
