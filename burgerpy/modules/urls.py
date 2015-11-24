@@ -17,7 +17,7 @@ class URLSModule(Module):
         if title is None:
             raise ValueError
         else:
-            return title
+            return title.strip()
 
     def format_title(self, title):
         title = title.encode('utf-8')
