@@ -1,6 +1,7 @@
 from burgerpy.common import Module, Config
 from burgerpy.common.utils import strip_tags
 from requests import get
+from urllib import unquote
 import simplejson as json
 
 
@@ -13,8 +14,8 @@ class GoogleSearch(object):
     def format_result(self, result):
         msg = "%s: %s - %s" % (
             result["titleNoFormatting"],
-            result["url"],
-            strip_tags(result["content"]))
+            unquote(result["url"]),
+            unquote(strip_tags(result["content"])))
         return msg
 
     def get_results(self, response):
