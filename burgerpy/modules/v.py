@@ -1,5 +1,6 @@
 from burgerpy.common import Module, Config
 from burgerpy.common.cube import Renderer
+from datetime import timedelta
 import simplejson as json
 
 
@@ -35,10 +36,19 @@ class VModule(Module):
         for line in r.get(d["content"]):
             self.send(d["channel"], line)
 
+    def on_lb5tr(self, chan, method, prop, body):
+        d = json.loads(body)
+        now = d["timestamp"]
+        departs_at = 1449705600
+
+        delta = str(timedelta(seconds=departs_at-now))
+        self.send(d["channel"], "%s until lb5tr leaves" % delta)
+
 
 if __name__ == "__main__":
     c = Config()
     v = VModule(config=c)
     v.listen('burger.command.v', v.on_v)
     v.listen('burger.command.3d', v.on_3d)
+    v.listen('burger.command.lb5tr', v.on_lb5tr)
     v.run()
