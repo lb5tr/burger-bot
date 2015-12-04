@@ -12,7 +12,8 @@ def test_simple():
     msg = {
         'content': 'pick one of those',
         'channel': 'channel',
-        'from': 'user'
+        'from': 'user',
+        'source' : 'reply.to'
     }
 
     msg = pm.on_pick(None, None, None, json.dumps(msg))
