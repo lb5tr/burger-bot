@@ -37,10 +37,10 @@ class Module(object):
     def _on_version(self, chan, method, properties, body):
         data = json.loads(body)
         origin = data["channel"]
-        self.send_result(self.compose_msg(origin,
-                                          "%s revision is %s" % (
-                                              self.name,
-                                              self.version)))
+        self.send_result(data["source"], self.compose_msg(origin,
+                                                          "%s revision is %s" % (
+                                                              self.name,
+                                                              self.version)))
 
     def listen(self, key, callback):
         self.amqp.listen(key, callback, self.name, 'bus')
@@ -48,8 +48,8 @@ class Module(object):
     def run(self):
         self.amqp.run()
 
-    def send_result(self, msg):
-        return self.amqp.send_result('bus', 'burger.outbound.send', json.dumps(msg))
+    def send_result(self, source, msg):
+        return self.amqp.send_result('bus', source, json.dumps(msg))
 
     def compose_msg(self, user, msg):
         return {
@@ -58,8 +58,8 @@ class Module(object):
             "message": msg
         }
 
-    def send(self, user, string):
-        return self.send_result(self.compose_msg(user, string))
+    def send(self, source, user, string):
+        return self.send_result(source, self.compose_msg(user, string))
 
     def _get_version(self):
         repo = Repo(self.app_config.base_dir)

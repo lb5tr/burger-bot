@@ -65,26 +65,13 @@ class IRC(irc.IRCClient):
 
         self.factory.amqp.start_outbound_queue(self.on_outbound_command)
 
-    def get_command(self, msg):
-        if msg == "":
-            raise LookupError('empty message')
-
-        first_word = msg.split(' ')[0]
-
-        if self.is_command(first_word):
-            return first_word[1:]
 
         return False
 
     def emit(self, key, data):
         data["timestamp"] = int(time())
+        data["source"] = 'burger.irc.out'
         self.factory.amqp.channel.basic_publish(exchange='bus', routing_key=key, body=json.dumps(data))
-
-    def is_command(self, word):
-        return word[0] == self.factory.config.command_character
-
-    def get_command_params(self, msg):
-        return ' '.join(msg.split(' ')[1:])
 
     def joined(self, channel):
         self.emit('burger.joined', {"channel": channel})
@@ -120,21 +107,10 @@ class IRC(irc.IRCClient):
         self.emit('burger.userRenamed', {"oldname": oldname, "newname": newname})
 
     def privmsg(self, user, channel, msg):
-        user = user.split('!', 1)[0]
-
-        to_send = {
-            "from": user,
-            "channel": channel,
-            "content": msg,
-        }
-
-        command = self.get_command(msg)
-        self.emit('burger.privmsg', to_send)
-
-        if command:
-            to_send["content"] = self.get_command_params(msg)
-            routing_key = "burger.command.%s" % command
-            self.emit(routing_key, to_send)
+        splits = user.split('!')
+        user = splits[0]
+        rest = splits[1]
+        self.emit('burger.privmsg', {"from" : user, "channel": channel, "content": msg, "rest": rest})
 
     def irc_unknown(self, prefix, command, params):
         channel = params[1]
@@ -176,7 +152,7 @@ class AMQP(object):
         yield self.channel.queue_bind(
             exchange='bus',
             queue=self.outbound_queue.method.queue,
-            routing_key='burger.outbound.send')
+            routing_key='burger.irc.out')
 
     @defer.inlineCallbacks
     def start_outbound_queue(self, callback):

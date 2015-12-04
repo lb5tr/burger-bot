@@ -18,12 +18,12 @@ class VModule(Module):
                                               "content": data["from"]}))
             return
 
-        self.send(origin, " ".join(data["content"]))
+        self.send(data["source"], origin, " ".join(data["content"]))
         for c in data["content"][1:]:
             if c.isspace():
-                self.send(origin, u'\u2000')
+                self.send(data["source"], origin, u'\u2000')
             else:
-                self.send(origin, c)
+                self.send(data["source"], origin, c)
 
     def on_3d(self, chan, method, prop, body):
         d = json.loads(body)
@@ -34,15 +34,15 @@ class VModule(Module):
         r = Renderer()
 
         for line in r.get(d["content"]):
-            self.send(d["channel"], line)
+            self.send(d["source"], d["channel"], line)
 
-    def on_lb5tr(self, chan, method, prop, body):
+    def on_until(self, chan, method, prop, body):
         d = json.loads(body)
         now = d["timestamp"]
         departs_at = 1449705600
 
         delta = str(timedelta(seconds=departs_at-now))
-        self.send(d["channel"], "%s until lb5tr leaves" % delta)
+        self.send(d["source"], d["channel"], "%s until lb5tr leaves" % delta)
 
 
 if __name__ == "__main__":
@@ -50,5 +50,5 @@ if __name__ == "__main__":
     v = VModule(config=c)
     v.listen('burger.command.v', v.on_v)
     v.listen('burger.command.3d', v.on_3d)
-    v.listen('burger.command.lb5tr', v.on_lb5tr)
+    v.listen('burger.command.until', v.on_until)
     v.run()

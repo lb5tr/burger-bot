@@ -44,7 +44,7 @@ class EbinModule(Module):
         if match:
             msg = self.generate_msg(match)
             msg = self.compose_msg(origin, msg)
-            self.send_result(msg)
+            self.send_result(body["source"], msg)
 
 if __name__ == "__main__":
     config = Config()

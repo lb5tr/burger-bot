@@ -53,7 +53,7 @@ class MemoModule(Module):
             self.set_memo_as_sent(memo)
             pager = Memo.pager(memo)
             msg = self.compose_msg(msg_origin, pager)
-            self.send_result(msg)
+            self.send_result(data["source"], msg)
 
     def add_memo(self, data):
         db = self.mongo_client.memo_module.memos
@@ -69,7 +69,7 @@ class MemoModule(Module):
             db.insert_one(memo)
 
         result = self.compose_msg(msg_origin, msg)
-        self.send_result(result)
+        self.send_result(data["source"], result)
 
     def on_msg(self, ch, method, properties, body):
         data = json.loads(body)
@@ -85,5 +85,5 @@ if __name__ == "__main__":
     mongo_client = pymongo.MongoClient(config.mongo_host, config.mongo_port)
     mm = MemoModule(config, mongo_client)
     mm.listen("burger.command.memo", mm.on_memo)
-    mm.listen("burger.msg", mm.on_msg)
+    mm.listen("burger.privmsg", mm.on_msg)
     mm.run()

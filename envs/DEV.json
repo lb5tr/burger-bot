@@ -6,8 +6,18 @@
     "irc_channels" : ["#burgerbot-test"],
     "amqp_server" : "localhost",
     "amqp_port" : 5672,
-    "irc_allowed_channels" : ["#burgerbot-test"],
+    "irc_allowed_channels" : ["#burgerbot-test", "#burgerbot-test-alone"],
     "mongo_host" : "localhost",
     "mongo_port" : 27017,
-    "base_dir" : "/home/kubov/code/burger/"
+    "base_dir" : "/home/kubov/code/burger/",
+    "commands" : ["pick",
+		  "greplog",
+		  "backlog",
+		  "3d",
+		  "v",
+		  "until",
+		  "g",
+		  "memo",
+		  "sage",
+		  "taylor"]
 }

@@ -85,9 +85,9 @@ class LoggerModule(Module):
         db = self.mongo_client.logger_module[origin]
         backlog = db.find().sort([("$natural", -1)]).limit(self.backlog_lines)
 
-        self.send_collection(data["from"], backlog)
+        self.send_collection(data["source"], data["from"], backlog)
 
-    def send_collection(self, dest, collection):
+    def send_collection(self, source, dest, collection):
         results = []
         for msg in collection:
             results = [msg] + results
@@ -95,7 +95,7 @@ class LoggerModule(Module):
         for msg in results:
             try:
                 event = Event.format_event(msg)
-                self.send_result(self.compose_msg(dest, event))
+                self.send_result(source, self.compose_msg(dest, event))
             except IndexError:
                 continue
 
@@ -124,7 +124,7 @@ class LoggerModule(Module):
              "content":
              {"$regex": regex,
               "$options": options}}).limit(self.grep_lines).sort([("$natural", -1)])
-        self.send_collection(data["from"], logs)
+        self.send_collection(data["source"], data["from"], logs)
 
 
 if __name__ == "__main__":

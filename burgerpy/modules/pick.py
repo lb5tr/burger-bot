@@ -15,7 +15,7 @@ class PickModule(Module):
 
             result = self.pick(words)
             msg = self.compose_msg(origin, "%s: %s" % (data["from"], result))
-            return self.send_result(msg)
+            return self.send_result(data["source"], msg)
 
     def pick(self, words):
         r = sorted(map(lambda word: (sha1(word).hexdigest(), word), words))

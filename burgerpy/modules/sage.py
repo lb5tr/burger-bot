@@ -28,7 +28,7 @@ class SageModule(Module):
         else:
             msg = self.compose_kick(words[0], data["channel"])
 
-        self.send_result(msg)
+        self.send_result(data["source"], msg)
 
 
 if __name__ == "__main__":

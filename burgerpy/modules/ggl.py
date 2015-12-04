@@ -44,7 +44,7 @@ class GoogleModule(Module):
         search_results = self.search.lucky_guess(query)
 
         msg = self.compose_msg(origin, search_results)
-        self.send_result(msg)
+        self.send_result(data["source"], msg)
 
 
 if __name__ == "__main__":
