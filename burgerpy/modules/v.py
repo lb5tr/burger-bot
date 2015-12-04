@@ -14,8 +14,10 @@ class VModule(Module):
         if len(data["content"]) > 15:
             self.amqp.send_result('bus',
                                   'burger.command.sage',
-                                  json.dumps({"channel": origin,
-                                              "content": data["from"]}))
+                                  json.dumps({
+                                      "source" : "burger.irc.out",
+                                      "channel": origin,
+                                      "content": data["from"]}))
             return
 
         self.send(data["source"], origin, " ".join(data["content"]))
