@@ -48,6 +48,17 @@ class VModule(Module):
         if diff > 0:
             delta = str(timedelta(seconds=departs_at-now))
             self.send(d["source"], d["channel"], "%s until lb5tr leaves" % delta)
+    
+    def on_nyc(self, chan, method, prop, body):
+        d = json.loads(body)
+        now = d["timestamp"]
+        departs_at = 1450942200
+
+        diff = departs_at - now
+
+        if diff > 0:
+            delta = str(timedelta(seconds=departs_at-now))
+            self.send(d["source"], d["channel"], "%s until TXL-MUC for NYC leaves" % delta)
 
 
 if __name__ == "__main__":
