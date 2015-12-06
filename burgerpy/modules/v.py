@@ -41,10 +41,13 @@ class VModule(Module):
     def on_until(self, chan, method, prop, body):
         d = json.loads(body)
         now = d["timestamp"]
-        departs_at = 1449705600
+        departs_at = 1449725100
 
-        delta = str(timedelta(seconds=departs_at-now))
-        self.send(d["source"], d["channel"], "%s until lb5tr leaves" % delta)
+        diff = departs_at - now
+
+        if diff > 0:
+            delta = str(timedelta(seconds=departs_at-now))
+            self.send(d["source"], d["channel"], "%s until lb5tr leaves" % delta)
 
 
 if __name__ == "__main__":
