@@ -67,4 +67,5 @@ if __name__ == "__main__":
     v.listen('burger.command.v', v.on_v)
     v.listen('burger.command.3d', v.on_3d)
     v.listen('burger.command.until', v.on_until)
+    v.listen('burger.command.nyc', v.on_nyc)
     v.run()
