@@ -15,7 +15,7 @@ class VModule(Module):
             self.amqp.send_result('bus',
                                   'burger.command.sage',
                                   json.dumps({
-                                      "source" : "burger.irc.out",
+                                      "source": "burger.irc.out",
                                       "channel": origin,
                                       "content": data["from"]}))
             return
@@ -50,13 +50,19 @@ class VModule(Module):
         return _handler
 
 
+DEADLINE_COMMANDS = [
+    ('until', 1449725100, "%s until lb5tr leaves"),
+    ('nyc', 1450942200, "%s until TXL-MUC for NYC leaves"),
+    ('q3k', 1454277000, "%s until q3k is all ogre")
+]
+
 if __name__ == "__main__":
     c = Config()
     v = VModule(config=c)
     v.listen('burger.command.v', v.on_v)
     v.listen('burger.command.3d', v.on_3d)
-
-    v.listen('burger.command.until', v.deadline(1449725100, "%s until lb5tr leaves"))
-    v.listen('burger.command.nyc', v.deadline(1450942200, "%s until TXL-MUC for NYC leaves"))
-    v.listen('burger.command.q3k', v.deadline(1454277000, "%s until q3k is all ogre"))
+    for cmd, ts, description in DEADLINE_COMMANDS:
+        event = 'burger.command.{}'.format(cmd)
+        handler = v.deadline(ts, description)
+        v.listen(event, handler)
     v.run()
