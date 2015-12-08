@@ -1,28 +1,25 @@
-from burgerpy.common import Module, Config
-from requests import get
-import simplejson as json
+import itertools
 import random
+import simplejson as json
+
+from requests import get
+
+from burgerpy.common import Module, Config
 
 
 class TaylorQuoteFinder(object):
-    apiURL = 'http://lyrics.wikia.com/api.php?action=lyrics&artist=Taylor%20Swift&fmt=realjson'
-
-    whiteList = ["1989", "Red"]
+    API_URL = 'http://lyrics.wikia.com/api.php?action=lyrics&artist=Taylor%20Swift&fmt=realjson'  # noqa
+    WHITELIST = ["1989", "Red"]
 
     def roll(self):
-        response = get(self.apiURL).json()
-        songs = map(lambda x: x["songs"] if x["album"] in self.whiteList else None, response["albums"])
-        songs = filter(lambda x: True if x is not None else False, songs)
-
-        songs = reduce(list.__add__, songs)
-
+        albums = get(self.API_URL).json()['albums']
+        songs = [v['songs'] for v in albums if v['album'] in self.WHITELIST]
+        songs = list(itertools.chain(*songs))
         song = random.choice(songs)
 
-        songLyrics = get(self.apiURL + "&song=" + song).json()["lyrics"]
-        lyricsLines = filter(lambda x: True if x is not "" else False, songLyrics.split("\n"))
-        del lyricsLines[-1]
-
-        return random.choice(lyricsLines)
+        lyrics = get(self.API_URL + "&song=" + song).json()['lyrics']
+        lines = [l for l in lyrics.split('\n') if l.strip()]
+        return random.choice(lines)
 
 
 class TaylorModule(Module):
