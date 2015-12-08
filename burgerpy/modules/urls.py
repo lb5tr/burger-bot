@@ -33,7 +33,7 @@ class URLSModule(Module):
         matches = re.findall(r'(https?://\S+)', content)
 
         try:
-            map(lambda url: self.send(origin, self.title(url)), matches)
+            map(lambda url: self.send(data["source"], origin, self.title(url)), matches)
         except ValueError:
             return
 
