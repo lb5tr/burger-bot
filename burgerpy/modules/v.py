@@ -17,7 +17,7 @@ class VModule(Module):
                                   json.dumps({
                                       "source": "burger.irc.out",
                                       "channel": origin,
-                                      "content": data["from"]}))
+                                      "content": "I did not hit her, it's not true!"}))
             return
 
         self.send(data["source"], origin, " ".join(data["content"]))
