@@ -10,23 +10,24 @@ class SageModule(Module):
             "message": "sage who?"
         }
 
-    def compose_kick(self, user, channel):
+    def compose_kick(self, user, channel, reason):
         return {
             "command": "kick",
             "channel": channel,
             "user": user,
-            "reason": ":^)"
+            "reason": reason
         }
 
     def on_sage(self, ch, method, properties, body):
         data = json.loads(body)
         words = data["content"].split()
+        reason = ' 'join(words[1:])
 
         msg = None
         if not words:
             msg = self.compose_fail_to_kick(data["channel"])
         else:
-            msg = self.compose_kick(words[0], data["channel"])
+            msg = self.compose_kick(words[0], data["channel"], reason)
 
         self.send_result(data["source"], msg)
 
