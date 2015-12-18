@@ -21,7 +21,7 @@ class SageModule(Module):
     def on_sage(self, ch, method, properties, body):
         data = json.loads(body)
         words = data["content"].split()
-        reason = ' 'join(words[1:])
+        reason = ' '.join(words[1:])
 
         msg = None
         if not words:
